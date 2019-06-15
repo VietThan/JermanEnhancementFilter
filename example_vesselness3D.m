@@ -1,19 +1,18 @@
 %% Enhancement of the 3D cerebral vasculature
 
 % load input image
-load('volume.mat');
+load('data/volume.mat');
 
-%rotate volume for visualization
-I = permute(I,[3,1,2]);
-I = I(end:-1:1,:,:);
 
 %normalize input a little bit
 I = I - min(I(:));
 I = I / prctile(I(I(:) > 0.5 * max(I(:))),90);
-I(I>1) = 1;
+I(I>1) = 1; 
 
 % compute enhancement for two different tau values
 V = vesselness3D(I, 1:4, [1;1;1], 0.75, true);
+
+niftiwrite(V, "volumeOutput.nii");
 
 % display result
 figure; 

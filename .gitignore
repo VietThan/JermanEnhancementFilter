@@ -1,2 +1,8 @@
 # ignore asv files
 *.asv
+
+# ignore .nii files
+*.nii
+
+# ignore data
+data/

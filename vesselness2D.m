@@ -24,22 +24,30 @@ function vesselness = vesselness2D(I, sigmas, spacing, tau, brightondark)
 %
 % Function written by T. Jerman, University of Ljubljana (October 2014)
 % Based on code by D. Kroon, University of Twente (May 2009)
+% Annotated by Viet Than, Vanderbilt University (June 2019)
 
+% Really wants to talk stuff
 verbose = 1;
 
 if nargin<5
     brightondark = false; % default mode for 2D is dark vessels compared to the background
 end
 
+% change image to singles
 I = single(I);
 
+% loop for working at different scales
 for j = 1:length(sigmas)
     
+    % Print out to display current scale
     if verbose
         disp(['Current filter scale (sigma): ' num2str(sigmas(j)) ]);
     end
     
+    % Retrieves the largest eigenvalue/eigenvector?
     [~, Lambda2] = imageEigenvalues(I,sigmas(j),spacing,brightondark); 
+    
+    % Reverse
     if brightondark == true
         Lambda2 = -Lambda2;
     end  
@@ -189,23 +197,22 @@ function I=imgaussian(I,sigma,spacing,siz)
 % multidimensional gaussian kernel, it uses the fact that a Gaussian 
 % filter can be separated in 1D gaussian kernels.
 %
-% J=IMGAUSSIAN(I,SIGMA,SIZE)
 %
 % inputs,
-%   I: 2D input image
-%   SIGMA: The sigma used for the Gaussian kernel
-%   SPACING: input image spacing
-%   SIZ: Kernel size (single value) (default: sigma*6)
+%   I           - 2D input image
+%   SIGMA       - The sigma used for the Gaussian kernel
+%   SPACING     - input image spacing
+%   SIZ         - Kernel size (single value) (default: sigma*6)
 % 
 % outputs,
-%   I: The gaussian filtered image
+%   I           - The gaussian filtered image
 %
 
 if(~exist('siz','var')), siz=sigma*6; end
 
 if(sigma>0)
 
-    % Filter each dimension with the 1D Gaussian kernels\
+    % Filter each dimension with the 1D Gaussian kernels
     x=-ceil(siz/spacing(1)/2):ceil(siz/spacing(1)/2);
     H = exp(-(x.^2/(2*(sigma/spacing(1))^2)));
     H = H/sum(H(:));    
@@ -222,11 +229,30 @@ end
 function [Lambda1,Lambda2]=eigvalOfHessian2D(Dxx,Dxy,Dyy)
 % This function calculates the eigen values from the
 % hessian matrix, sorted by abs value
+% Input:
+%   Dxx, Dxy, Dyy   - The mappings for 2nd order derivatives with respect
+%                     to the corresponding variables
 
-% Compute the eigenvectors of J, v1 and v2
+% Output:
+%   Lambda1         - The smaller eigenvalue
+%   Lambda2         - The bigger eigenvalue 
+
+% THE MATH
+% Symmetric 2x2 matrix eigenvector and eigenvalue, can be verified with eig()
+%       | a  b |
+%       | b  c |
+% Eigenvectors: V =
+% [ (a/2 + c/2 - (a^2 - 2*a*c + 4*b^2 + c^2)^(1/2)/2)/b - c/b, (a/2 + c/2 + (a^2 - 2*a*c + 4*b^2 + c^2)^(1/2)/2)/b - c/b]
+% [                                                         1,                                                         1]
+% Eigenvalues: D =
+% [ a/2 + c/2 - (a^2 - 2*a*c + 4*b^2 + c^2)^(1/2)/2,                                               0]
+% [                                               0, a/2 + c/2 + (a^2 - 2*a*c + 4*b^2 + c^2)^(1/2)/2]
+
+
+% Compute the square root term
 tmp = sqrt((Dxx - Dyy).^2 + 4*Dxy.^2);
 
-% Compute the eigenvalues
+% Compute the eigenvalues based on THE MATH
 mu1 = 0.5*(Dxx + Dyy + tmp);
 mu2 = 0.5*(Dxx + Dyy - tmp);
 

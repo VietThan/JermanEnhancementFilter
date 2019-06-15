@@ -1,20 +1,30 @@
 %% Enhancement of the 2D retinal vasculature
 
-% load input image
+% LOAD INPUT IMAGE
 I = imread('data/vessel.png');
 
-% preprocess the input a little bit
-Ip = single(I); % turning into singles
-thr = prctile(Ip(Ip(:)>0),1) * 0.9; % 
+% PREPROCESS THE INPUT A LITTLE BIT
+% turning into singles
+Ip = single(I);
+
+% find any intensity larger than 0, find the 1 percentile, 90% it
+thr = prctile(Ip(Ip(:)>0),1) * 0.9; 
+ 
+% Lift any value less than thr to equal thr
 Ip(Ip<=thr) = thr;
+
+% subtract from every value the minimum value (should be thr)
+% then divide every value by the max
+% this puts all intensity in range [0,1]
 Ip = Ip - min(Ip(:));
 Ip = Ip ./ max(Ip(:));    
 
-% compute enhancement for two different tau values
+
+% COMPUTE ENHANCEMENT FOR TWO DIFFERENT TAU VALUES
 V1 = vesselness2D(Ip, 0.5:0.5:2.5, [1;1], 1, false);
 V2 = vesselness2D(Ip, 0.5:0.5:2.5, [1;1], 0.5, false);
 
-% display result
+% DISPLAY RESULTS
 figure; 
 subplot(2,2,1)
 imshow(I)
