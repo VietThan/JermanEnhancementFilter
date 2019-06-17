@@ -64,6 +64,9 @@ for j = 1:length(sigmas)
     response(Lambda2 <= 0 | Lambda_rho <= 0) = 0;
     response(~isfinite(response)) = 0;   
     
+%     name = append(sprintf('data/VISEImages/output'), num2str(j), sprintf('.png'));
+%     imwrite(response, name);
+    
     %max response over multiple scales
     if(j==1)
         vesselness = response;
