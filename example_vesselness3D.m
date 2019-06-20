@@ -12,7 +12,7 @@ I(I>1) = 1;
 % compute enhancement for two different tau values
 V = vesselness3D(I, 1:4, [1;1;1], 0.75, true);
 
-niftiwrite(V, "volumeOutput.nii");
+niftiwrite(V, "volumeOutputPC.nii");
 
 % display result
 figure; 

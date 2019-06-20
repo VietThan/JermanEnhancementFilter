@@ -2,9 +2,9 @@
 
 % LOAD INPUT IMAGE
 % for j = 1:8
-    name = sprintf('data/TaoImages/AVG_Reslice of D2_3ii');
-    nameIn = append(name, sprintf('.tif'));
-    I = imread(nameIn);
+%     name = sprintf('data/TaoImages/AVG_Reslice of D2_3ii');
+%     nameIn = append(name, sprintf('.tif'));
+    I = imread('data/vessel.png');
 
     % PREPROCESS THE INPUT A LITTLE BIT
     % turning into singles
@@ -24,8 +24,8 @@
 
 
     % COMPUTE ENHANCEMENT FOR TWO DIFFERENT TAU VALUES
-    V1 = vesselness2D(Ip, 2:0.5:5, [1;1], 1.5, false);
-    V2 = vesselness2D(Ip, 2:0.5:5, [1;1], 2, false);
+    V1 = vesselness2D(Ip, 0.5:0.5:2.5, [1;1], 0.5, false);
+    V2 = vesselness2D(Ip, 0.5:0.5:2.5, [1;1], 1, false);
 
     % DISPLAY RESULTS
     figure; 
