@@ -36,12 +36,12 @@
 
     subplot(2,2,3)
     imshow(V1)
-    title('Filter enhancement (tau=1.5)')
+    title('Filter enhancement (tau=0.5)')
     axis image
 
     subplot(2,2,4)
     imshow(V2)
-    title('Filter enhancement (tau=2)')
+    title('Filter enhancement (tau=1)')
     axis image
 
 %     nameOutput = append(name, sprintf('_Output.tif'));
