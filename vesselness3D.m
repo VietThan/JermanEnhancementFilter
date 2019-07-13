@@ -58,11 +58,13 @@ for j = 1:length(sigmas)
     % Where:
     %  Lambda3 is greater than 0
     %  Lambda3 is smaller or equal to tau*(max over all Lambda3)
-    % Then: set to tau*(max over all Lambda3)
+    % Then: 		set to tau*(max over all Lambda3)
+    % Everywhere else: 	set to 0
     Lambda_rho(Lambda3 > 0 & Lambda3 <= tau .* max(Lambda3(:))) = tau .* max(Lambda3(:));
     Lambda_rho(Lambda3 <= 0) = 0;
-    response = Lambda2.*Lambda2.*(Lambda_rho-Lambda2).* 27 ./ (Lambda2 + Lambda_rho).^3;    
-    
+
+    % THIS IS THE PROPOSED ENHANCEMENT FUNCTION
+    response = Lambda2.*Lambda2.*(Lambda_rho-Lambda2).* 27 ./ (Lambda2 + Lambda_rho).^3;
     response(Lambda2 >= Lambda_rho./2 & Lambda_rho > 0) = 1;    
     response(Lambda2 <= 0 | Lambda_rho <= 0) = 0;
     response(~isfinite(response)) = 0;
