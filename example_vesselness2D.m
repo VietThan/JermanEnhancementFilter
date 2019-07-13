@@ -2,9 +2,9 @@
 
 % LOAD INPUT IMAGE
 % for j = 1:8
-%     name = sprintf('data/TaoImages/AVG_Reslice of D2_3ii');
-%     nameIn = append(name, sprintf('.tif'));
-    I = imread('data/vessel.png');
+    name = sprintf('data/TaoImages/AVG_Reslice of D2_3ii');
+    nameIn = append(name, sprintf('.tif'));
+    I = imread(nameIn);
 
     % PREPROCESS THE INPUT A LITTLE BIT
     % turning into singles
@@ -24,8 +24,8 @@
 
 
     % COMPUTE ENHANCEMENT FOR TWO DIFFERENT TAU VALUES
-    V1 = vesselness2D(Ip, 0.5:0.5:2.5, [1;1], 0.5, false);
-    V2 = vesselness2D(Ip, 0.5:0.5:2.5, [1;1], 1, false);
+    V1 = vesselness2D(Ip, 2:0.5:5, [1;1], 1.5, false);
+    V2 = vesselness2D(Ip, 2:0.5:5, [1;1], 2, false);
 
     % DISPLAY RESULTS
     figure; 
@@ -36,12 +36,12 @@
 
     subplot(2,2,3)
     imshow(V1)
-    title('Filter enhancement (tau=0.5)')
+    title('Filter enhancement (tau=1.5)')
     axis image
 
     subplot(2,2,4)
     imshow(V2)
-    title('Filter enhancement (tau=1)')
+    title('Filter enhancement (tau=2)')
     axis image
 
 %     nameOutput = append(name, sprintf('_Output.tif'));

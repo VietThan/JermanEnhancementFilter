@@ -10,7 +10,7 @@ I = I / prctile(I(I(:) > 0.5 * max(I(:))),90);
 I(I>1) = 1; 
 
 % compute enhancement for two different tau values
-V = vesselness3D(I, 1:6, [1;1;1], 1, false);
+V = vesselness3D(I, 1:10, [1;1;1], 1, false);
 
 niftiwrite(V, "Smallfield OCT Angiography Volume_fovea_Output.nii");
 

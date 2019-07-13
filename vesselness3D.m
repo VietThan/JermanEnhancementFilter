@@ -27,27 +27,38 @@ function vesselness = vesselness3D(I, sigmas, spacing, tau, brightondark)
 
 verbose = 1;
 
+% set bright vessels on dark background as default
 if nargin<5
-    brightondark = true; % default
+    brightondark = true;
 end
 
-I(~isfinite(I)) = 0;
-I = single(I);
+I(~isfinite(I)) = 0; % not finite, set to 0
+I = single(I); % set as 4 byte floats (single)
 
+% iterate over different sigmas
 for j = 1:length(sigmas)
     
+    % print out current filter sigma
     if verbose   
         disp(['Current Filter Sigma: ' num2str(sigmas(j)) ]);
     end
     
+    % retrieve the two larger lambdas for each image array at current sigma
     [~, Lambda2, Lambda3] = volumeEigenvalues(I,sigmas(j),spacing,brightondark);
-    if brightondark == true
+
+    % set lambda to correct orientation
+    if brightondark == true 
         Lambda2 = -Lambda2;
         Lambda3 = -Lambda3;
     end
     
     % proposed filter      
     Lambda_rho = Lambda3;
+
+    % Where:
+    %  Lambda3 is greater than 0
+    %  Lambda3 is smaller or equal to tau*(max over all Lambda3)
+    % Then: set to tau*(max over all Lambda3)
     Lambda_rho(Lambda3 > 0 & Lambda3 <= tau .* max(Lambda3(:))) = tau .* max(Lambda3(:));
     Lambda_rho(Lambda3 <= 0) = 0;
     response = Lambda2.*Lambda2.*(Lambda_rho-Lambda2).* 27 ./ (Lambda2 + Lambda_rho).^3;    

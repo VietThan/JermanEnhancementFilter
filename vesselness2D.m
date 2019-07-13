@@ -44,27 +44,20 @@ for j = 1:length(sigmas)
         disp(['Current filter scale (sigma): ' num2str(sigmas(j)) ]);
     end
     
-    % Retrieves the largest eigenvalue
+    % Retrieves the largest eigenvalue/eigenvector?
     [~, Lambda2] = imageEigenvalues(I,sigmas(j),spacing,brightondark); 
     
-    % REVERSE
+    % Reverse
     if brightondark == true
         Lambda2 = -Lambda2;
     end  
     
-    % PROPOSED FILTER AT CURRENT SCALE
+    % proposed filter at current scale
     Lambda3 = Lambda2;
     
-    % At this point, all the lambdas have the same value
-    Lambda_rho = Lambda3; 
-    
-    % All values greater than 0 and less than max*tau raised to ta
+    Lambda_rho = Lambda3;
     Lambda_rho(Lambda3 > 0 & Lambda3 <= tau .* max(Lambda3(:))) = tau .* max(Lambda3(:));
-    
-    % All less than 0 raised to 0
     Lambda_rho(Lambda3 <= 0) = 0;
-    
-    
     response = Lambda2.*Lambda2.*(Lambda_rho-Lambda2).* 27 ./ (Lambda2 + Lambda_rho).^3;    
     
     response(Lambda2 >= Lambda_rho./2 & Lambda_rho > 0) = 1;    
@@ -74,7 +67,7 @@ for j = 1:length(sigmas)
 %     name = append(sprintf('data/VISEImages/output'), num2str(j), sprintf('.png'));
 %     imwrite(response, name);
     
-    % max response over multiple scales
+    %max response over multiple scales
     if(j==1)
         vesselness = response;
     else        
@@ -84,8 +77,8 @@ for j = 1:length(sigmas)
     clear response Lambda2 Lambda3
 end
 
-% vesselness = vesselness ./ max(vesselness(:)); % should not be really needed   
-% vesselness(vesselness < 1e-2) = 0;
+vesselness = vesselness ./ max(vesselness(:)); % should not be really needed   
+vesselness(vesselness < 1e-2) = 0;
 
 function [Lambda1, Lambda2] = imageEigenvalues(I,sigma,spacing,brightondark)
 % calculates the two eigenvalues for each voxel in a volume
@@ -162,7 +155,6 @@ function [Dxx, Dyy, Dxy] = Hessian2D(I,Sigma,spacing)
 if nargin < 3, Sigma = 1; end
 
 if(Sigma>0)
-    
     F=imgaussian(I,Sigma,spacing);
 else
     F=I;
@@ -223,7 +215,7 @@ if(~exist('siz','var')), siz=sigma*6; end
 
 if(sigma>0)
 
-    % FILTER EACH DIMENSION WITH THE 1D GAUSSIAN CURVE
+    % Filter each dimension with the 1D Gaussian kernels
     x=-ceil(siz/spacing(1)/2):ceil(siz/spacing(1)/2);
     H = exp(-(x.^2/(2*(sigma/spacing(1))^2)));
     H = H/sum(H(:));    
@@ -234,11 +226,7 @@ if(sigma>0)
     H = H/sum(H(:));    
     Hy=reshape(H,[1 length(H)]);
     
-    % as noted in a discussion on GitHub with the author, filtering each side instead of
-    % doing both at the same time can reduce MATLAB computational load
-    % See more here: https://blogs.mathworks.com/steve/2006/10/04/separable-convolution/
-    
-    I=imfilter(imfilter(I,Hx, 'same' ,'replicate', 'conv'),Hy, 'same' ,'replicate', 'conv');
+    I=imfilter(imfilter(I,Hx, 'same' ,'replicate'),Hy, 'same' ,'replicate');
 end
 
 function [Lambda1,Lambda2]=eigvalOfHessian2D(Dxx,Dxy,Dyy)
